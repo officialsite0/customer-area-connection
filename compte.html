@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bankkarte</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Left side (Dashboard) */
+        .left-side {
+            flex: 1 1 60%;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .welcome-message {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .sub-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .balance {
+            font-size: 48px;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, #1a73e8, #ff8c00);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 350px;
+            margin-bottom: 30px;
+        }
+
+        /* Right side (Bankkarte) */
+        .right-side {
+            flex: 1 1 35%;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Neue BMO Karte */
+        .card {
+            width: 100%;
+            height: 230px;
+            background: linear-gradient(135deg, #e6e0c5, #ffffff); /* Beige leicht versenkt */
+            border-radius: 15px;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), inset 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .card-number {
+            font-size: 20px;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            word-wrap: break-word; /* Verhindert das Überlaufen */
+        }
+
+        .card-holder {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .card-expiry {
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .card-type {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2d2d2d;
+        }
+
+        .card-back {
+            width: 100%;
+            height: 230px;
+            background: linear-gradient(135deg, #e6e0c5, #ffffff); /* Beige leicht versenkt */
+            border-radius: 15px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), inset 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .magnetic-stripe {
+            width: 100%;
+            height: 30px;
+            background-color: #333;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .cvv-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            background-color: #4caf50;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .logout-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .logout-section a {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            background-color: red;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .logout-section a:hover {
+            background-color: #ff4747;
+        }
+
+        .transaction-history {
+            width: 100%;
+            margin-top: 20px;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-history h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .transaction-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .transaction-item.deposit {
+            background-color: #d4edda;
+        }
+
+        .transaction-item.withdrawal {
+            background-color: #f8d7da;
+        }
+
+        .transaction-item .icon {
+            font-size: 18px;
+        }
+
+        .transaction-item .date {
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .card-info {
+            width: 100%;
+            margin-top: 30px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-info h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .card-info p {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .card-info .icon {
+            margin-right: 10px;
+            color: #1a73e8;
+        }
+
+        .card-info .address {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-info .address .icon {
+            font-size: 18px;
+            color: #2d2d2d;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .left-side, .right-side {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .balance {
+                font-size: 36px;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .welcome-message {
+                font-size: 28px;
+            }
+
+            .sub-message {
+                font-size: 16px;
+            }
+
+            .card {
+                height: 200px;
+            }
+
+            .card-number {
+                font-size: 24px;
+            }
+
+            .card-holder, .card-expiry {
+                font-size: 14px;
+            }
+
+            .cvv-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cvv-section {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .left-side {
+                flex: 1;
+            }
+
+            .right-side {
+                flex: 1;
+            }
+
+            .status {
+                font-size: 16px;
+                padding: 6px 12px;
+            }
+
+            .card {
+                height: 180px;
+            }
+
+            .card-number {
+                font-size: 20px;
+            }
+
+            .card-holder {
+                font-size: 14px;
+            }
+
+            .card-expiry {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .balance {
+                font-size: 28px;
+            }
+
+            .welcome-message {
+                font-size: 24px;
+            }
+
+            .sub-message {
+                font-size: 14px;
+            }
+
+            .card {
+                height: 160px;
+            }
+
+            .card-number {
+                font-size: 18px;
+            }
+
+            .card-holder {
+                font-size: 12px;
+            }
+
+            .card-expiry {
+                font-size: 10px;
+            }
+
+            .status {
+                font-size: 14px;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Left side (Dashboard) -->
+        <div class="left-side">
+            <!-- Begrüßungsnachricht -->
+            <div class="welcome-message">Hallo BERND GIWANSKI</div>
+            <div class="sub-message">Wir freuen uns, Sie wiederzusehen</div>
+
+            <!-- Kontostand - attraktives Design -->
+            <div class="balance">€ 337.300</div>
+
+            <!-- Diagramm -->
+            <div class="chart-container">
+                <canvas id="balanceChart"></canvas>
+            </div>
+
+            <div class="transaction-history">
+                <h3>Transaktionshistorie</h3>
+                <div class="transaction-list">
+                    <div class="transaction-item deposit">
+                        <i class="fas fa-arrow-down icon"></i>
+                        <span>Einzahlung</span>
+                        <span>€ 337.500</span>
+                        <span class="date">30. April 2024</span>
+                    </div>
+                    <div class="transaction-item withdrawal">
+                        <i class="fas fa-arrow-up icon"></i>
+                        <span>Abhebung</span>
+                        <span>€ 100</span>
+                        <span class="date">30. April 2024</span>
+                    </div>
+                    <div class="transaction-item withdrawal">
+                        <i class="fas fa-arrow-up icon"></i>
+                        <span>Abhebung</span>
+                        <span>€ 100</span>
+                        <span class="date">02. Mai 2024</span>
+                    </div>
+                    <!-- Nouveaux retraits avec échec -->
+                    <div class="transaction-item withdrawal failed">
+                        <i class="fas fa-times-circle icon" style="color: red;"></i>
+                        <span>Abhebung</span>
+                        <span>€ 100</span>
+                        <span class="date">01. Mai 2024</span>
+                    </div>
+                    <div class="transaction-item withdrawal failed">
+                        <i class="fas fa-times-circle icon" style="color: red;"></i>
+                        <span>Abhebung</span>
+                        <span>€ 100</span>
+                        <span class="date">01. Mai 2024</span>
+                    </div>
+                    <div class="transaction-item withdrawal failed">
+                        <i class="fas fa-times-circle icon" style="color: red;"></i>
+                        <span>Abhebung</span>
+                        <span>€ 100</span>
+                        <span class="date">01. Mai 2024</span>
+                    </div>
+                </div>
+            </div>
+            
+
+        <!-- Right side (Bankkarte) -->
+        <div class="right-side">
+            <!-- Bankkarte -->
+            <div class="card">
+                <div class="card-number">4577 9300 3027 7878</div>
+                <div class="card-holder">BERND GIWANSKI</div>
+                <div class="card-expiry">12/26</div>
+                <div class="card-type">Visa</div>
+            </div>
+
+            <div class="card-back">
+                <div class="magnetic-stripe"></div>
+                <div class="cvv-section">
+                    <span>CVV: 234</span>
+                </div>
+            </div>
+
+            <!-- Karte-Informationen -->
+            <div class="card-info">
+                <h3>Informationen zur Karte</h3>
+                <p><i class="fas fa-user icon"></i><strong>Besitzer:</strong> BERND GIWANSKI</p>
+                <p><i class="fas fa-map-marker-alt icon"></i><strong>Adresse:</strong> ALLEE De JARDIN 2, 56288 BRAUNSHORN</p>
+                <p><i class="fas fa-credit-card icon"></i><strong>Karten-Typ:</strong> Visa</p>
+                <p><i class="fas fa-calendar-alt icon"></i><strong>Ablaufdatum:</strong> 12/26</p>
+                <p><i class="fas fa-flag icon"></i><strong>Wohnsitzland:</strong> Deutschland</p>
+            </div>
+
+            <!-- Status aktiv -->
+            <div class="status">Aktiv</div>
+
+            <!-- Logout Section -->
+            <div class="logout-section">
+                <a href="index.html">Abmelden</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Graphique du solde
+        var ctx = document.getElementById('balanceChart').getContext('2d');
+        var balanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['30.04.2024', '01.05.2024', '02.05.2024', '18.02.2025'],
+                datasets: [{
+                    label: 'Kontostand',
+                    data: [0, 350000, 337500, 337300],
+                    borderColor: 'rgba(26, 115, 232, 1)',
+                    backgroundColor: 'rgba(26, 115, 232, 0.2)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 350000,
+                        ticks: {
+                            stepSize: 50000
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
