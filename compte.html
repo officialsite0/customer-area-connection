@@ -162,7 +162,7 @@
             font-size: 20px;
             font-weight: 700;
             color: #fff;
-            background-color: #4caf50;
+            background-color: #de5151;
             padding: 10px 20px;
             border-radius: 50px;
             text-align: center;
@@ -279,116 +279,56 @@
             margin-right: 10px;
         }
 
-        @media (max-width: 1024px) {
-            .dashboard-container {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .left-side, .right-side {
-                width: 100%;
-                margin-bottom: 20px;
-            }
-
-            .balance {
-                font-size: 36px;
-                padding: 15px;
-                margin-bottom: 20px;
-            }
-
-            .welcome-message {
-                font-size: 28px;
-            }
-
-            .sub-message {
-                font-size: 16px;
-            }
-
-            .card {
-                height: 200px;
-            }
-
-            .card-number {
-                font-size: 24px;
-            }
-
-            .card-holder, .card-expiry {
-                font-size: 14px;
-            }
-
-            .cvv-section {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .cvv-section {
-                font-size: 14px;
-            }
+        /* Section de message d'urgence */
+        .emergency-message-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+        .emergency-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .message-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Assurez-vous que la section d'urgence s'ajuste aux petits écrans */
         @media (max-width: 768px) {
-            .left-side {
-                flex: 1;
+            .emergency-message-container {
+                flex-direction: column;
+                text-align: center;
             }
 
-            .right-side {
-                flex: 1;
+            .emergency-icon {
+                margin-bottom: 10px;
             }
 
-            .status {
+            .message-text {
                 font-size: 16px;
-                padding: 6px 12px;
-            }
-
-            .card {
-                height: 180px;
-            }
-
-            .card-number {
-                font-size: 20px;
-            }
-
-            .card-holder {
-                font-size: 14px;
-            }
-
-            .card-expiry {
-                font-size: 12px;
             }
         }
 
         @media (max-width: 480px) {
-            .balance {
-                font-size: 28px;
+            .emergency-message-container {
+                padding: 10px;
             }
 
-            .welcome-message {
-                font-size: 24px;
+            .emergency-icon {
+                font-size: 20px;
             }
 
-            .sub-message {
+            .message-text {
                 font-size: 14px;
-            }
-
-            .card {
-                height: 160px;
-            }
-
-            .card-number {
-                font-size: 18px;
-            }
-
-            .card-holder {
-                font-size: 12px;
-            }
-
-            .card-expiry {
-                font-size: 10px;
-            }
-
-            .status {
-                font-size: 14px;
-                padding: 5px 10px;
             }
         }
     </style>
@@ -409,6 +349,7 @@
             <div class="chart-container">
                 <canvas id="balanceChart"></canvas>
             </div>
+
 
             <div class="transaction-history">
                 <h3>Transaktionshistorie</h3>
@@ -456,6 +397,18 @@
                         <span>€ 2000</span>
                         <span class="date">19. Februar 2025</span>
                     </div>
+                    <div class="transaction-item withdrawal failed">
+                        <i class="fas fa-times-circle icon" style="color: red;"></i>
+                        <span>Abhebung</span>
+                        <span>€ 2000</span>
+                        <span class="date">20. Februar 2025</span>
+                    </div>
+                    <div class="transaction-item withdrawal failed">
+                        <i class="fas fa-times-circle icon" style="color: red;"></i>
+                        <span>Abhebung</span>
+                        <span>€ 1000</span>
+                        <span class="date">20. Februar 2025</span>
+                    </div>
                 </div>
             </div>
             
@@ -486,10 +439,18 @@
                 <p><i class="fas fa-credit-card icon"></i><strong>Karten-Typ:</strong> Visa</p>
                 <p><i class="fas fa-calendar-alt icon"></i><strong>Ablaufdatum:</strong> 12/26</p>
                 <p><i class="fas fa-flag icon"></i><strong>Wohnsitzland:</strong> Deutschland</p>
-            </div>
+            </div> <br>
 
+
+            <div class="emergency-message-container">
+                <i class="fas fa-exclamation-circle emergency-icon"></i>
+                <div class="message-text">Bitte beachten Sie, dass Ihre Karte aufgrund ungewöhnlicher Aktivitäten auf Ihrem Konto vorübergehend deaktiviert wurde. Um dieses Problem zu beheben und mögliche Lösungen zu erkunden, wenden Sie sich bitte umgehend an unser Support-Team unter <a href="contact@creditio-mas-simple.com">contact@creditio-mas-simple.com</a>.
+
+                    Wir danken Ihnen für Ihr Verständnis und versichern Ihnen, dass unser Team aktiv daran arbeitet, diese Situation so schnell wie möglich zu lösen.</div>
+            </div>
+        
             <!-- Status aktiv -->
-            <div class="status">Aktiv</div>
+            <div class="status">Deaktiviert</div> <br>
 
             <!-- Logout Section -->
             <div class="logout-section">
